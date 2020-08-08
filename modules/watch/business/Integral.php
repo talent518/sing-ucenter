@@ -1,23 +1,29 @@
 <?php
 namespace app\modules\watch\business;
 
+use app\models\watch\UserIntegral;
 use app\models\watch\UserIntegralLog;
 use yii\db\Transaction;
-use app\models\watch\UserIntegral;
 
 class Integral extends Base {
 	
 	/**
-	 * 教材
-	 * @var integer
+	 * 根据用户ID、期数ID和课程ID获取星星记录列表
+	 * 
+	 * @param int $user_id 用户ID
+	 * @param int $periods_id 期数ID
+	 * @param int $course_id 课程ID
 	 */
-	const DEST_TYPE_TEXTBOOK = 1;
-	
-	/**
-	 * 环节
-	 * @var integer
-	 */
-	const DEST_TYPE_SEGMENT = 2;
+	public function course(int $user_id, int $periods_id, int $course_id) {
+		$data = UserIntegralLog::find()->where(compact('user_id', 'periods_id', 'course_id'))->all();
+		
+		foreach($data as &$row) {
+			$row = $row->attributes;
+			unset($row['user_id'], $row['periods_id'], $row['course_id']);
+		}
+		
+		return $this->asData($data);
+	}
 
 	/**
 	 * 查询用户星星数

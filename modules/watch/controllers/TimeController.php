@@ -1,9 +1,9 @@
 <?php
 namespace app\modules\watch\controllers;
 
+use app\constants\ErrInfo;
 use app\modules\watch\business\Time;
 use app\modules\watch\components\Controller;
-use app\constants\ErrInfo;
 
 class TimeController extends Controller {
 	

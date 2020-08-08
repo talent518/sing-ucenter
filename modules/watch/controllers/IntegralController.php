@@ -1,6 +1,7 @@
 <?php
 namespace app\modules\watch\controllers;
 
+use app\constants\ErrInfo;
 use app\modules\watch\business\Integral;
 use app\modules\watch\components\Controller;
 
@@ -19,7 +20,12 @@ class IntegralController extends Controller {
 		];
 	}
 	
-	public function actionIndex() {
+	public function actionCourse(int $user_id, int $periods_id, int $course_id) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0) {
+			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
+		}
+		
+		return $this->integral->course($user_id, $periods_id, $course_id);
 	}
 	
 	public function actionView(int $id) {
