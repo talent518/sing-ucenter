@@ -36,6 +36,7 @@ class Integral extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
+	 * @param int $course_id 课程ID
 	 * @param int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)
 	 * @param int $dest_id 目标ID
 	 * @param int $flag 标示
@@ -43,21 +44,35 @@ class Integral extends Base {
 	 * @param string $remark 备注
 	 * @return \app\core\CCResponse
 	 */
-	public function create(int $user_id, int $periods_id, int $dest_type, int $dest_id, int $flag, int $stars, string $remark = '') {
+	public function create(int $user_id, int $periods_id, int $course_id, int $dest_type, int $dest_id, int $flag, int $stars, string $remark = '') {
 		if($user_id <= 0) {
 			return $this->asError('user_id参数必须是大于零的整数');
 		}
 		if($periods_id <= 0) {
 			return $this->asError('periods_id参数必须是大于零的整数');
 		}
+		if($course_id <= 0) {
+			return $this->asError('course_id参数必须是大于零的整数');
+		}
 		switch($dest_type) {
-			case 1:
+			case 1: // 教材
+			case 2: // 环节
+			case 3: // 学习报告
+			case 4: // 调查问卷
+			case 5: // 生成证书
+			case 6: // 分享证书
+			case 7: // 礼品兑换
+				if($dest_id <= 0) {
+					return $this->asError('dest_id参数必须是大于零的整数');
+				}
 				break;
+			default:
+				return $this->asError('dest_type不能为' . $dest_type);
 		}
 		
 		$transaction = UserIntegralLog::getDb()->beginTransaction(Transaction::SERIALIZABLE);
 		
-		$condition = compact('user_id', 'periods_id', 'dest_type', 'dest_id', 'flag');
+		$condition = compact('user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag');
 		$model = UserIntegralLog::findOne($condition);
 		if($model) {
 			$transaction->rollBack();
@@ -68,11 +83,11 @@ class Integral extends Base {
 		$model->setAttributes($condition);
 		$model->stars = $stars;
 		$model->remark = $remark;
-		$model->save(false);
+		$ret = $model->save(false);
 		
 		$transaction->commit();
 		
-		return $this->asOK('记录星星成功');
+		return $ret ? $this->asOK('记录星星成功') : $this->asError('记录星星失败');
 	}
 
 }

@@ -26,8 +26,8 @@ class IntegralController extends Controller {
 		return $this->integral->view($id);
 	}
 
-	public function actionCreate(int $user_id, int $periods_id, int $dest_type, int $dest_id, int $flag, int $stars, string $remark = '') {
-		return $this->integral->create($user_id, $periods_id, $dest_type, $dest_id, $flag, $stars, $remark);
+	public function actionCreate(int $user_id, int $periods_id, int $course_id, int $dest_type, int $dest_id, int $flag, int $stars, string $remark = '') {
+		return $this->integral->create($user_id, $periods_id, $course_id, $dest_type, $dest_id, $flag, $stars, $remark);
 	}
 
 }

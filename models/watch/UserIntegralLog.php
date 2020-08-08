@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $user_id 用户ID
  * @property int $periods_id 期数ID
+ * @property int $course_id 课程ID
  * @property int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)
  * @property int $dest_id 目标ID
  * @property int $flag 标示
@@ -32,11 +33,11 @@ class UserIntegralLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'periods_id', 'dest_type', 'dest_id', 'flag'], 'required'],
-            [['user_id', 'periods_id', 'dest_type', 'dest_id', 'flag', 'stars'], 'integer'],
+            [['user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag'], 'required'],
+            [['user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag', 'stars'], 'integer'],
             [['created_at'], 'safe'],
             [['remark'], 'string', 'max' => 100],
-            [['user_id', 'periods_id', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'dest_type', 'dest_id', 'flag']],
+            [['user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag']],
         ];
     }
 
@@ -48,6 +49,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
         return [
             'user_id' => '用户ID',
             'periods_id' => '期数ID',
+            'course_id' => '课程ID',
             'dest_type' => '目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)',
             'dest_id' => '目标ID',
             'flag' => '标示',
@@ -55,6 +57,14 @@ class UserIntegralLog extends \yii\db\ActiveRecord
             'remark' => '备注',
             'created_at' => '创建时间',
         ];
+    }
+    
+    public function beforeSave($insert) {
+    	if(!parent::beforeSave($insert)) {
+    		return false;
+    	}
+    	
+    	return $this->stars > 0;
     }
     
     public function afterSave($insert, $changedAttributes) {

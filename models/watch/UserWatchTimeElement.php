@@ -7,17 +7,16 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "user_watch_play_time_element".
+ * This is the model course for table "user_watch_play_time_element".
  *
  * @property int $user_id 用户ID
  * @property int $periods_id 期数ID
- * @property int $class_id 班级ID
+ * @property int $course_id 课程ID
  * @property int $textbook_id 课节ID
  * @property int $segment_id 环节ID
  * @property int $element_id 素材ID
  * @property int $duration 素材时长
  * @property int $play_time 播放时间
- * @property int $is_complete 是否已完成
  * @property int $is_playable 是否可播放
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
@@ -50,10 +49,10 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'periods_id', 'class_id', 'textbook_id', 'segment_id', 'element_id'], 'required'],
-            [['user_id', 'periods_id', 'class_id', 'textbook_id', 'segment_id', 'element_id', 'duration', 'play_time', 'is_complete', 'is_playable'], 'integer'],
+            [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id'], 'required'],
+            [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id', 'duration', 'play_time', 'is_playable'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['user_id', 'periods_id', 'class_id', 'textbook_id', 'segment_id', 'element_id'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'class_id', 'textbook_id', 'segment_id', 'element_id']],
+            [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id']],
         ];
     }
 
@@ -65,21 +64,37 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
         return [
             'user_id' => '用户ID',
             'periods_id' => '期数ID',
-            'class_id' => '班级ID',
+            'course_id' => '课程ID',
             'textbook_id' => '教材ID',
             'segment_id' => '环节ID',
             'element_id' => '素材ID',
             'duration' => '素材时长',
             'play_time' => '播放时间',
-            'is_complete' => '是否已完成',
             'is_playable' => '是否可播放',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
         ];
     }
     
+    private $_play_time = 0;
+    public function afterFind() {
+    	parent::afterFind();
+    	
+    	$this->_play_time = $this->play_time;
+    }
+    
+    public function beforeSave($insert) {
+    	if(!parent::beforeSave($insert)) {
+    		return false;
+    	}
+    	
+    	return $this->play_time > $this->_play_time;
+    }
+    
     public function afterSave($insert, $changedAttributes) {
     	parent::afterSave($insert, $changedAttributes);
+    	
+    	$playTime = ($this->play_time - $this->_play_time);
     	
     	$model = UserWatchTime::findOne($this->user_id);
     	if(!$model) {
@@ -87,7 +102,18 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
     		$model->user_id = $this->user_id;
     		$model->play_time = 0;
     	}
-    	$model->play_time += $this->play_time;
+    	$model->play_time += $playTime;
+    	$model->save(false);
+    	
+    	$date = date('Y-m-d');
+    	$model = UserWatchTimeDate::findOne(['user_id'=>$this->user_id, 'date'=>$date]);
+    	if(!$model) {
+    		$model = new UserWatchTimeDate();
+    		$model->user_id = $this->user_id;
+    		$model->date = $date;
+    		$model->play_time = 0;
+    	}
+    	$model->play_time += $playTime;
     	$model->save(false);
     }
 }
