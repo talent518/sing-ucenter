@@ -58,8 +58,8 @@ class TimeController extends Controller {
 		return $this->time->view($id);
 	}
 
-	public function actionCreate(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id, int $element_id, int $play_time, int $is_playable) {
-		return $this->time->createOrUpdate($user_id, $periods_id, $course_id, $textbook_id, $segment_id, $element_id, $play_time, $is_playable);
+	public function actionCreate(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id, int $element_id, int $play_time) {
+		return $this->time->createOrUpdate($user_id, $periods_id, $course_id, $textbook_id, $segment_id, $element_id, $play_time);
 	}
 
 }

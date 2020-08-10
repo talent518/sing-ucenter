@@ -112,7 +112,6 @@ class Time extends Base {
 	 * @param int $segment_id 环节ID
 	 * @param int $element_id 素材ID
 	 * @param int $play_time 播放时间
-	 * @param int $is_playable 是否可播放
 	 * @return \app\core\CCResponse
 	 */
 	public function createOrUpdate(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id, int $element_id, int $play_time) {
