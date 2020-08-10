@@ -8,4 +8,6 @@ return [
 	'apiProductDuration' => 600,
 	
 	'apiOrderView' => 'http://admin.test.changchangenglish.com/api/open/order/',
+	
+	'apiCourseService' => 'http://course-api.test.changchangenglish.com/open/',
 ];

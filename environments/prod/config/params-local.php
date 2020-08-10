@@ -42,9 +42,6 @@ return [
         'app_key' => 'OoUDxlPTSOAvqx4Hl93z9RON',
         'duration' => 300,
     ],
-
-	'apiProductList' => 'https://admin.changchangenglish.com/api/open/product/products',
-	'apiProductDuration' => 600,
 	
-	'apiOrderView' => 'https://admin.changchangenglish.com/api/open/order/',
+	'apiCourseService' => 'https://course-service.changchangenglish.com/open/',
 ];

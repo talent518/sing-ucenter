@@ -10,7 +10,7 @@ use Yii;
  * @property int $user_id 用户ID
  * @property int $periods_id 期数ID
  * @property int $course_id 课程ID
- * @property int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)
+ * @property int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换,8成长记录)
  * @property int $dest_id 目标ID
  * @property int $flag 标示
  * @property int $stars 素材时长
@@ -50,7 +50,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
             'user_id' => '用户ID',
             'periods_id' => '期数ID',
             'course_id' => '课程ID',
-            'dest_type' => '目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)',
+            'dest_type' => '目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换,8成长记录)',
             'dest_id' => '目标ID',
             'flag' => '标示',
             'stars' => '星星数',

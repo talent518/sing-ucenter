@@ -96,24 +96,34 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
     	
     	$playTime = ($this->play_time - $this->_play_time);
     	
-    	$model = UserWatchTime::findOne($this->user_id);
-    	if(!$model) {
-    		$model = new UserWatchTime();
-    		$model->user_id = $this->user_id;
-    		$model->play_time = 0;
-    	}
-    	$model->play_time += $playTime;
-    	$model->save(false);
+    	if($this->is_playable) {
+    		$model = UserWatchTime::findOne($this->user_id);
+    		if(!$model) {
+    			$model = new UserWatchTime();
+    			$model->user_id = $this->user_id;
+    			$model->play_time = 0;
+    		}
+    		$model->play_time += $playTime;
+    		$model->save(false);
     	
-    	$date = date('Y-m-d');
-    	$model = UserWatchTimeDate::findOne(['user_id'=>$this->user_id, 'date'=>$date]);
-    	if(!$model) {
-    		$model = new UserWatchTimeDate();
-    		$model->user_id = $this->user_id;
-    		$model->date = $date;
-    		$model->play_time = 0;
+    		$date = date('Y-m-d');
+    		$model = UserWatchTimeDate::findOne(['user_id'=>$this->user_id, 'date'=>$date]);
+    		if(!$model) {
+    			$model = new UserWatchTimeDate();
+    			$model->user_id = $this->user_id;
+    			$model->date = $date;
+    			$model->play_time = 0;
+    		}
+    		$model->play_time += $playTime;
+    		$model->save(false);
     	}
-    	$model->play_time += $playTime;
+    	
+    	$attrs = $this->getAttributes(['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id']);
+    	$model = UserWatchTimeSegment::findOne($attrs);
+    	if(!$model) {
+    		$model = new UserWatchTimeSegment();
+    		$model->attributes = $attrs;
+    	}
     	$model->save(false);
     }
 }

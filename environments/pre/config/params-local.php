@@ -35,5 +35,4 @@ return [
         'topicName' => 'system-event',
         'subscriptionName' => '市场系统事件通知',
     ]
-
 ];

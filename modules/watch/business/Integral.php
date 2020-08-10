@@ -47,7 +47,7 @@ class Integral extends Base {
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
-	 * @param int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)
+	 * @param int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换,8成长记录)
 	 * @param int $dest_id 目标ID
 	 * @param int $flag 标示
 	 * @param int $stars 星星数

@@ -6,6 +6,10 @@ use app\models\watch\UserWatchTimeDate;
 use app\models\watch\UserWatchTimeElement;
 use yii\db\Expression;
 use yii\db\Transaction;
+use app\core\CCRequest;
+use app\services\watch\CourseService;
+use app\models\watch\UserWatchTimeSegment;
+use app\models\watch\UserWatchTimeTextbook;
 
 class Time extends Base {
 
@@ -17,22 +21,9 @@ class Time extends Base {
 	 * @param int $course_id 课程ID
 	 */
 	public function course(int $user_id, int $periods_id, int $course_id) {
-		$data = UserWatchTimeElement::find()->select(new Expression('textbook_id, segment_id, SUM(IF(is_playable=0,0,play_time)) play_time, SUM(IF(play_time>=duration,1,play_time/duration)) num, COUNT(element_id) total'))->where(compact('user_id', 'periods_id', 'course_id'))->groupBy('textbook_id, segment_id')->createCommand()->queryAll();
-		$ret = [];
-		foreach($data as $row) {
-			$ret[$row['textbook_id']][] = [
-				'segment_id' => (int) $row['segment_id'],
-				'play_time' => (int) $row['play_time'],
-				'progress' => min($row['num'] / max(3, $row['total']), 1)
-			];
-		}
-		$data = [];
-		foreach($ret as $id=>$segs) {
-			$data[] = [
-				'textbook_id' => $id,
-				'play_time' => array_sum(array_column($segs, 'play_time')),
-				'progress' => min(array_sum(array_column($segs, 'progress')) / max(3, count($segs)) * 100, 100)
-			];
+		$data = UserWatchTimeTextbook::find()->select('textbook_id, duration, play_time')->where(compact('user_id', 'periods_id', 'course_id'))->all();
+		foreach($data as &$row) {
+			$row = $row->getAttributes(['textbook_id', 'duration', 'play_time']);
 		}
 		return $this->asData($data);
 	}
@@ -45,13 +36,9 @@ class Time extends Base {
 	 * @param int $textbook_id 教材ID
 	 */
 	public function textbook(int $user_id, int $periods_id, int $textbook_id) {
-		$data = UserWatchTimeElement::find()->select(new Expression('segment_id, SUM(IF(is_playable=0,0,play_time)) play_time, SUM(IF(play_time>=duration,1,play_time/duration)) num, COUNT(element_id) total'))->where(compact('user_id', 'periods_id', 'textbook_id'))->groupBy('segment_id')->createCommand()->queryAll();
+		$data = UserWatchTimeSegment::find()->select('segment_id, duration, play_time')->where(compact('user_id', 'periods_id', 'textbook_id'))->all();
 		foreach($data as &$row) {
-			$row = [
-				'segment_id' => (int) $row['segment_id'],
-				'play_time' => (int) $row['play_time'],
-				'progress' => min(ceil($row['num'] / max(3, $row['total']) * 100), 100)
-			];
+			$row = $row->getAttributes(['segment_id', 'duration', 'play_time']);
 		}
 		return $this->asData($data);
 	}
@@ -64,10 +51,11 @@ class Time extends Base {
 	 * @param int $segment_id 环节ID
 	 */
 	public function segment(int $user_id, int $periods_id, int $segment_id) {
-		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time')->where(compact('user_id', 'periods_id', 'segment_id'))->all();
+		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable')->where(compact('user_id', 'periods_id', 'segment_id'))->all();
 		foreach($data as &$row) {
 			$row = [
 				'element_id' => $row->element_id,
+				'is_playable' => $row->is_playable,
 				'play_time' => $row->play_time,
 				'progress' => min(ceil($row->play_time / $row->duration * 100), 100)
 			];
@@ -141,6 +129,11 @@ class Time extends Base {
 			return $this->asError('play_time参数必须是大于零的整数');
 		}
 		
+		$element = CourseService::getElement($course_id, $textbook_id, $segment_id, $element_id);
+		if(!$element) {
+			return $this->asError('素材不存在');
+		}
+		
 		$transaction = UserWatchTimeElement::getDb()->beginTransaction(Transaction::SERIALIZABLE);
 		
 		$model = UserWatchTimeElement::findOne($condition);
@@ -150,14 +143,18 @@ class Time extends Base {
 			$model->play_time = 0;
 		}
 		
-		$model->duration = 300; // TODO 临时处理
 		$model->play_time += $play_time;
-		$model->is_playable = 1; // TODO 临时处理
+		
+		$model->is_playable = ($element['is_play'] ? 1 : 0);
+		$model->duration = max(floor($element['duration']), 1);
+		
 		$ret = $model->save(false);
+		
+		$progress = UserWatchTimeSegment::find()->select('progress')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id'))->scalar();
 		
 		$transaction->commit();
 		
-		return $ret ? $this->asOK('记录时长成功') : $this->asError('记录时长失败');
+		return $ret ? $this->asData($progress ? (int) $progress : 0, '记录时长成功') : $this->asError('记录时长失败');
 	}
 
 }

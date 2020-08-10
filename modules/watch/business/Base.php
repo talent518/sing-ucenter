@@ -81,8 +81,8 @@ class Base {
 		return new CCResponse(null, $code, $message);
 	}
 	
-	protected function asData($data) {
-		return new CCResponse($data);
+	protected function asData($data, $message = 'ok') {
+		return new CCResponse($data, 0, $message);
 	}
 	
 	protected function endError(string $message, int $code = 417) {
