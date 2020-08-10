@@ -4,12 +4,10 @@ namespace app\modules\watch\business;
 use app\models\watch\UserWatchTime;
 use app\models\watch\UserWatchTimeDate;
 use app\models\watch\UserWatchTimeElement;
-use yii\db\Expression;
-use yii\db\Transaction;
-use app\core\CCRequest;
-use app\services\watch\CourseService;
 use app\models\watch\UserWatchTimeSegment;
 use app\models\watch\UserWatchTimeTextbook;
+use app\services\watch\CourseService;
+use yii\db\Transaction;
 
 class Time extends Base {
 
@@ -21,9 +19,9 @@ class Time extends Base {
 	 * @param int $course_id 课程ID
 	 */
 	public function course(int $user_id, int $periods_id, int $course_id) {
-		$data = UserWatchTimeTextbook::find()->select('textbook_id, duration, play_time')->where(compact('user_id', 'periods_id', 'course_id'))->all();
+		$data = UserWatchTimeTextbook::find()->select('textbook_id, progress, play_time')->where(compact('user_id', 'periods_id', 'course_id'))->all();
 		foreach($data as &$row) {
-			$row = $row->getAttributes(['textbook_id', 'duration', 'play_time']);
+			$row = $row->getAttributes(['textbook_id', 'progress', 'play_time']);
 		}
 		return $this->asData($data);
 	}
@@ -36,9 +34,9 @@ class Time extends Base {
 	 * @param int $textbook_id 教材ID
 	 */
 	public function textbook(int $user_id, int $periods_id, int $textbook_id) {
-		$data = UserWatchTimeSegment::find()->select('segment_id, duration, play_time')->where(compact('user_id', 'periods_id', 'textbook_id'))->all();
+		$data = UserWatchTimeSegment::find()->select('segment_id, progress, play_time')->where(compact('user_id', 'periods_id', 'textbook_id'))->all();
 		foreach($data as &$row) {
-			$row = $row->getAttributes(['segment_id', 'duration', 'play_time']);
+			$row = $row->getAttributes(['segment_id', 'progress', 'play_time']);
 		}
 		return $this->asData($data);
 	}
