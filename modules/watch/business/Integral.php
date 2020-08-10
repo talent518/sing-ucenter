@@ -14,8 +14,12 @@ class Integral extends Base {
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
 	 */
-	public function course(int $user_id, int $periods_id, int $course_id) {
-		$data = UserIntegralLog::find()->where(compact('user_id', 'periods_id', 'course_id'))->all();
+	public function course(int $user_id, int $periods_id, int $course_id, array $dest_type = []) {
+		$query = UserIntegralLog::find()->where(compact('user_id', 'periods_id', 'course_id'));
+		if($dest_type) {
+			$query->andWhere(compact('dest_type'));
+		}
+		$data = $query->all();
 		
 		foreach($data as &$row) {
 			$row = $row->attributes;

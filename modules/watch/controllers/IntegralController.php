@@ -25,7 +25,7 @@ class IntegralController extends Controller {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
-		return $this->integral->course($user_id, $periods_id, $course_id);
+		return $this->integral->course($user_id, $periods_id, $course_id, $this->getParamAsArray('dest_type'));
 	}
 	
 	public function actionView(int $id) {
