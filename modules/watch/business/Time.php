@@ -49,12 +49,13 @@ class Time extends Base {
 	 * @param int $segment_id 环节ID
 	 */
 	public function segment(int $user_id, int $periods_id, int $segment_id) {
-		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable')->where(compact('user_id', 'periods_id', 'segment_id'))->all();
+		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable, max_play_time')->where(compact('user_id', 'periods_id', 'segment_id'))->all();
 		foreach($data as &$row) {
 			$row = [
 				'element_id' => $row->element_id,
 				'is_playable' => $row->is_playable,
 				'play_time' => $row->play_time,
+				'max_play_time' => $row->max_play_time,
 				'progress' => min(ceil($row->play_time / $row->duration * 100), 100)
 			];
 		}
