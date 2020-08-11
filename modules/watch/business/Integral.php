@@ -13,9 +13,14 @@ class Integral extends Base {
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
+	 * @param array $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
+	 * @param array $dest_type 目标类型(1产品2课程3主题4教材5环节)
 	 */
-	public function course(int $user_id, int $periods_id, int $course_id, array $dest_type = []) {
+	public function course(int $user_id, int $periods_id, int $course_id, array $business_type = [], array $dest_type = []) {
 		$query = UserIntegralLog::find()->where(compact('user_id', 'periods_id', 'course_id'));
+		if($business_type) {
+			$query->andWhere(compact('business_type'));
+		}
 		if($dest_type) {
 			$query->andWhere(compact('dest_type'));
 		}
@@ -47,14 +52,14 @@ class Integral extends Base {
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
-	 * @param int $dest_type 目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换,8成长记录)
+	 * @param int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
+	 * @param int $dest_type 目标类型(1产品2课程3主题4教材5环节)
 	 * @param int $dest_id 目标ID
-	 * @param int $flag 标示
 	 * @param int $stars 星星数
 	 * @param string $remark 备注
 	 * @return \app\core\CCResponse
 	 */
-	public function create(int $user_id, int $periods_id, int $course_id, int $dest_type, int $dest_id, int $flag, int $stars, string $remark = '') {
+	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '') {
 		if($user_id <= 0) {
 			return $this->asError('user_id参数必须是大于零的整数');
 		}
@@ -64,25 +69,19 @@ class Integral extends Base {
 		if($course_id <= 0) {
 			return $this->asError('course_id参数必须是大于零的整数');
 		}
-		switch($dest_type) {
-			case 1: // 教材
-			case 2: // 环节
-			case 3: // 学习报告
-			case 4: // 调查问卷
-			case 5: // 生成证书
-			case 6: // 分享证书
-			case 7: // 礼品兑换
-				if($dest_id <= 0) {
-					return $this->asError('dest_id参数必须是大于零的整数');
-				}
-				break;
-			default:
-				return $this->asError('dest_type不能为' . $dest_type);
+		if($business_type <= 0 || $business_type > 8) {
+			return $this->asError('business_type不能为' . $business_type);
+		}
+		if($dest_type <= 0 || $dest_type > 5) {
+			return $this->asError('dest_type不能为' . $dest_type);
+		}
+		if($dest_id <= 0) {
+			return $this->asError('dest_id参数必须是大于零的整数');
 		}
 		
 		$transaction = UserIntegralLog::getDb()->beginTransaction(Transaction::SERIALIZABLE);
 		
-		$condition = compact('user_id', 'periods_id', 'course_id', 'dest_type', 'dest_id', 'flag');
+		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
 		$model = UserIntegralLog::findOne($condition);
 		if($model) {
 			$transaction->rollBack();
