@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property int $duration 素材时长
  * @property int $play_time 播放时间
  * @property int $is_playable 是否可播放
+ * @property int $max_play_time 最大播放时长
  * @property string $created_at 创建时间
  * @property string $updated_at 更新时间
  */
@@ -50,7 +51,7 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id'], 'required'],
-            [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id', 'duration', 'play_time', 'is_playable'], 'integer'],
+            [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id', 'duration', 'play_time', 'is_playable', 'max_play_time'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id', 'element_id']],
         ];
@@ -71,6 +72,7 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
             'duration' => '素材时长',
             'play_time' => '播放时间',
             'is_playable' => '是否可播放',
+            'max_play_time' => '最大播放时长',
             'created_at' => '创建时间',
             'updated_at' => '更新时间',
         ];

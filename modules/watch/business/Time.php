@@ -144,6 +144,7 @@ class Time extends Base {
 		
 		$model->is_playable = ($element['is_play'] ? 1 : 0);
 		$model->duration = max(floor($element['duration']), 1);
+		$model->max_play_time = max($play_time, $model->max_play_time);
 		
 		$ret = $model->save(false);
 		
