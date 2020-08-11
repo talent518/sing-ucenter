@@ -43,7 +43,7 @@ return [
             'hostname' => '127.0.0.1',
             'port' => '6379',
             'password' => 'Sing%41@',
-            'database' => 5,
+            'database' => 15,
         ],
     ]
 ];
