@@ -74,9 +74,7 @@ class UserWatchTimeSegment extends \yii\db\ActiveRecord
     			$row->delete();
     			continue;
     		}
-    		if($row->max_play_time >= $row->duration) {
-    			$completes ++;
-    		}
+    		$completes += min(1, $row->max_play_time / $row->duration);
     		if($row->is_playable) {
     			$this->play_time += $row->play_time;
     		}

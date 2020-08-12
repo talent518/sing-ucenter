@@ -54,13 +54,13 @@ CREATE TABLE `user_integral_log` (
   `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
   `periods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '期数ID',
   `course_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '课程ID',
-  `dest_type` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '目标类型(1教材,2环节,3学习报告,4调查问卷,5生成证书,6分享证书,7礼品兑换)',
+  `business_type` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)',
+  `dest_type` smallint(4) unsigned NOT NULL DEFAULT '0' COMMENT '目标类型(1产品2课程3主题4教材5环节)',
   `dest_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '目标ID',
-  `flag` smallint(4) unsigned NOT NULL DEFAULT '0' COMMENT '标示',
   `stars` int(10) NOT NULL DEFAULT '0' COMMENT '星星数',
   `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`user_id`,`periods_id`,`course_id`,`dest_type`,`dest_id`,`flag`)
+  PRIMARY KEY (`user_id`,`periods_id`,`course_id`,`business_type`,`dest_type`,`dest_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户星星明细'
 /*!50100 PARTITION BY HASH (user_id)
 PARTITIONS 128 */;
@@ -76,6 +76,23 @@ CREATE TABLE `user_watch_time` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户看课总时长'
+/*!50100 PARTITION BY HASH (user_id)
+PARTITIONS 128 */;
+
+/*Table structure for table `user_watch_time_course` */
+
+DROP TABLE IF EXISTS `user_watch_time_course`;
+
+CREATE TABLE `user_watch_time_course` (
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `periods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '期数ID',
+  `course_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '课程ID',
+  `play_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '播放时间',
+  `progress` smallint(3) unsigned NOT NULL DEFAULT '0' COMMENT '进度',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`,`periods_id`,`course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户课程时长'
 /*!50100 PARTITION BY HASH (user_id)
 PARTITIONS 128 */;
 
@@ -108,10 +125,48 @@ CREATE TABLE `user_watch_time_element` (
   `duration` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '素材时长',
   `play_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '播放时间',
   `is_playable` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否可播放',
+  `max_play_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '最大播放时长',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`user_id`,`periods_id`,`course_id`,`textbook_id`,`segment_id`,`element_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户看课时长明细'
+/*!50100 PARTITION BY HASH (user_id)
+PARTITIONS 128 */;
+
+/*Table structure for table `user_watch_time_segment` */
+
+DROP TABLE IF EXISTS `user_watch_time_segment`;
+
+CREATE TABLE `user_watch_time_segment` (
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `periods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '期数ID',
+  `course_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '课程ID',
+  `textbook_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '教材ID',
+  `segment_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '环节ID',
+  `play_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '播放时间',
+  `progress` smallint(3) unsigned NOT NULL DEFAULT '0' COMMENT '进度',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`,`periods_id`,`course_id`,`textbook_id`,`segment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户环节时长'
+/*!50100 PARTITION BY HASH (user_id)
+PARTITIONS 128 */;
+
+/*Table structure for table `user_watch_time_textbook` */
+
+DROP TABLE IF EXISTS `user_watch_time_textbook`;
+
+CREATE TABLE `user_watch_time_textbook` (
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `periods_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '期数ID',
+  `course_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '课程ID',
+  `textbook_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '教材ID',
+  `play_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '播放时间',
+  `progress` smallint(3) unsigned NOT NULL DEFAULT '0' COMMENT '进度',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`,`periods_id`,`course_id`,`textbook_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户教材时长'
 /*!50100 PARTITION BY HASH (user_id)
 PARTITIONS 128 */;
 

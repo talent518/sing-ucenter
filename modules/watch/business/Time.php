@@ -59,7 +59,7 @@ class Time extends Base {
 				'is_playable' => $row->is_playable,
 				'play_time' => $row->play_time,
 				'max_play_time' => $row->max_play_time,
-				'progress' => min(ceil($row->play_time / $row->duration * 100), 100)
+				'progress' => min(floor($row->max_play_time / $row->duration * 100), 100)
 			];
 		}
 		return $this->asData($data);
