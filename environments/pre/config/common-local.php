@@ -15,7 +15,7 @@ $config = [
                 [
                     'class' => 'app\core\CCFileTarget',
                     'maxFileSize' => 102400,
-                    'logFile' => '/var/log/yii2/market-service/app-'.date("Y-m-d").'.log',
+                    'logFile' => '/var/log/yii2/ucenter-service/app-' . date("Y-m-d") . '.log',
                 ]
             ],
         ],

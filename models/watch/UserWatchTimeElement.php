@@ -90,7 +90,7 @@ class UserWatchTimeElement extends \yii\db\ActiveRecord
     		return false;
     	}
     	
-    	return $this->play_time > $this->_play_time;
+    	return PHP_SAPI === 'cli' || $this->play_time > $this->_play_time;
     }
     
     public function afterSave($insert, $changedAttributes) {

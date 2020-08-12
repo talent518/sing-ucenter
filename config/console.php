@@ -13,7 +13,7 @@ $config = [
     'controllerNamespace' => 'app\commands\controllers',
     'components' => [
         'cache' => [
-            'class' => 'yii\redis\Cache',
+            'class' => 'app\core\RedisCache',
         ],
         'queue1' => [
             'class' => 'yii\queue\redis\Queue',
