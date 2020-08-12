@@ -43,5 +43,5 @@ return [
         'duration' => 300,
     ],
 	
-	'apiCourseService' => 'https://course-service.changchangenglish.com/open/',
+	'apiCourseService' => 'http://course-internal.changchangenglish.com/open/',
 ];
