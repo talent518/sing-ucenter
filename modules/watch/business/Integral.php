@@ -3,7 +3,6 @@ namespace app\modules\watch\business;
 
 use app\models\watch\UserIntegral;
 use app\models\watch\UserIntegralLog;
-use yii\db\Transaction;
 
 class Integral extends Base {
 	
@@ -79,12 +78,11 @@ class Integral extends Base {
 			return $this->asError('dest_id参数必须是大于零的整数');
 		}
 		
-		$transaction = UserIntegralLog::getDb()->beginTransaction(Transaction::SERIALIZABLE);
+		\Yii::$app->mutex->acquire('userIntegralLock-' . $user_id);
 		
 		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
 		$model = UserIntegralLog::findOne($condition);
 		if($model) {
-			$transaction->rollBack();
 			return $this->asError('星星记录存在');
 		}
 		
@@ -93,8 +91,6 @@ class Integral extends Base {
 		$model->stars = $stars;
 		$model->remark = $remark;
 		$ret = $model->save(false);
-		
-		$transaction->commit();
 		
 		return $ret ? $this->asOK('记录星星成功') : $this->asError('记录星星失败');
 	}

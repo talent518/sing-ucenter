@@ -7,7 +7,6 @@ use app\models\watch\UserWatchTimeElement;
 use app\models\watch\UserWatchTimeSegment;
 use app\models\watch\UserWatchTimeTextbook;
 use app\services\watch\CourseService;
-use yii\db\Transaction;
 
 class Time extends Base {
 
@@ -135,7 +134,7 @@ class Time extends Base {
 			return $this->asError('素材不存在');
 		}
 		
-		$transaction = UserWatchTimeElement::getDb()->beginTransaction(Transaction::SERIALIZABLE);
+		\Yii::$app->mutex->acquire('userWatchTimeLock-' . $user_id);
 		
 		$model = UserWatchTimeElement::findOne($condition);
 		if(!$model) {
@@ -153,8 +152,6 @@ class Time extends Base {
 		$ret = $model->save(false);
 		
 		$progress = UserWatchTimeSegment::find()->select('progress')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id'))->scalar();
-		
-		$transaction->commit();
 		
 		return $ret ? $this->asData($progress ? (int) $progress : 0, '记录时长成功') : $this->asError('记录时长失败');
 	}
