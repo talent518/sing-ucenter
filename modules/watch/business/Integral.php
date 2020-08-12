@@ -78,7 +78,7 @@ class Integral extends Base {
 			return $this->asError('dest_id参数必须是大于零的整数');
 		}
 		
-		\Yii::$app->mutex->acquire('userIntegralLock-' . $user_id);
+		\Yii::$app->mutex->acquire('userIntegralLock-' . $user_id, 10);
 		
 		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
 		$model = UserIntegralLog::findOne($condition);

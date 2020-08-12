@@ -10,7 +10,7 @@ class WatchController extends Controller {
 	public function actionRefresh() {
 		$userIds = UserWatchTimeElement::find()->distinct()->select('user_id')->column();
 		foreach($userIds as $user_id) {
-			\Yii::$app->mutex->acquire('userWatchTimeLock-' . $user_id);
+			\Yii::$app->mutex->acquire('userWatchTimeLock-' . $user_id, 10);
 			$list = UserWatchTimeElement::findAll(compact('user_id'));
 			foreach($list as $i=>$model) { /* @var $model UserWatchTimeElement */
 				echo $i+1, ' - Element(', implode(', ', array_map(function($key) use($model) {
@@ -33,5 +33,13 @@ class WatchController extends Controller {
 			}
 			\Yii::$app->mutex->release('userWatchTimeLock-' . $user_id);
 		}
+	}
+	
+	public function actionLock($name, $seconds=10) {
+		\Yii::$app->mutex->acquire($name, $seconds);
+		echo microtime(true), PHP_EOL;
+		$seconds > 0 and sleep($seconds);
+		echo microtime(true), PHP_EOL;
+		\Yii::$app->mutex->release($name);
 	}
 }

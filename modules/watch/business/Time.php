@@ -134,7 +134,7 @@ class Time extends Base {
 			return $this->asError('素材不存在');
 		}
 		
-		\Yii::$app->mutex->acquire('userWatchTimeLock-' . $user_id);
+		\Yii::$app->mutex->acquire('userWatchTimeLock-' . $user_id, 10);
 		
 		$model = UserWatchTimeElement::findOne($condition);
 		if(!$model) {
