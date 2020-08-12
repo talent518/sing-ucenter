@@ -18,6 +18,8 @@ class WatchController extends Controller {
 			$element = CourseService::getElement($model->course_id, $model->textbook_id, $model->segment_id, $model->element_id);
 			if(!$element) {
 				echo 'Not Found', PHP_EOL;
+				$element->delete();
+				$element->afterSave();
 				continue;
 			}
 			
