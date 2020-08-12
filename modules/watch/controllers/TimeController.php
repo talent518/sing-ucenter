@@ -31,7 +31,7 @@ class TimeController extends Controller {
 	}
 	
 	public function actionTextbook(int $user_id, int $periods_id, int $course_id, int $textbook_id) {
-		if($user_id <= 0 || $periods_id <= 0 || $textbook_id <= 0) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id <= 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
@@ -39,7 +39,7 @@ class TimeController extends Controller {
 	}
 	
 	public function actionSegment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id) {
-		if($user_id <= 0 || $periods_id <= 0 || $segment_id <= 0) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id <= 0 || $segment_id <= 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
