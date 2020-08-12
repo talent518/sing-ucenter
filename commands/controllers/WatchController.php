@@ -19,7 +19,7 @@ class WatchController extends Controller {
 			if(!$element) {
 				echo 'Not Found', PHP_EOL;
 				$model->delete();
-				$model->afterSave();
+				$model->afterSave(false, []);
 				continue;
 			}
 			
