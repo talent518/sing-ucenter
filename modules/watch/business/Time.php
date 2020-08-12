@@ -27,7 +27,7 @@ class Time extends Base {
 	}
 	
 	/**
-	 * 根据用户ID、期数ID和教材ID获取每环节进度
+	 * 根据用户ID、期数ID、课程ID和教材ID获取每环节进度
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
@@ -43,7 +43,7 @@ class Time extends Base {
 	}
 	
 	/**
-	 * 根据用户ID、期数ID和环节ID获取每素材进度
+	 * 根据用户ID、期数ID、课程ID、教材ID和环节ID获取每素材进度
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
