@@ -25,7 +25,5 @@ class WatchController extends Controller {
 			
 			echo $ret ? 'Success' : 'Failure', PHP_EOL;
 		}
-		
-		var_dump(\Yii::getLogger()->getDbProfiling());
 	}
 }
