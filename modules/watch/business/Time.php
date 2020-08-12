@@ -31,10 +31,11 @@ class Time extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
+	 * @param int $course_id 课程ID
 	 * @param int $textbook_id 教材ID
 	 */
-	public function textbook(int $user_id, int $periods_id, int $textbook_id) {
-		$data = UserWatchTimeSegment::find()->select('segment_id, progress, play_time')->where(compact('user_id', 'periods_id', 'textbook_id'))->all();
+	public function textbook(int $user_id, int $periods_id, int $course_id, int $textbook_id) {
+		$data = UserWatchTimeSegment::find()->select('segment_id, progress, play_time')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id'))->all();
 		foreach($data as &$row) {
 			$row = $row->getAttributes(['segment_id', 'progress', 'play_time']);
 		}
@@ -46,10 +47,12 @@ class Time extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
+	 * @param int $course_id 课程ID
+	 * @param int $textbook_id 教材ID
 	 * @param int $segment_id 环节ID
 	 */
-	public function segment(int $user_id, int $periods_id, int $segment_id) {
-		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable, max_play_time')->where(compact('user_id', 'periods_id', 'segment_id'))->all();
+	public function segment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id) {
+		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable, max_play_time')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id'))->all();
 		foreach($data as &$row) {
 			$row = [
 				'element_id' => $row->element_id,
