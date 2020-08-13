@@ -2,6 +2,7 @@
 namespace app\modules\watch\business;
 
 use app\models\watch\UserWatchTime;
+use app\models\watch\UserWatchTimeCourse;
 use app\models\watch\UserWatchTimeDate;
 use app\models\watch\UserWatchTimeElement;
 use app\models\watch\UserWatchTimeSegment;
@@ -11,16 +12,40 @@ use app\services\watch\CourseService;
 class Time extends Base {
 
 	/**
+	 * 根据用户ID、期数ID获取每课程进度
+	 * 
+	 * @param int $user_id 用户ID
+	 * @param int $periods_id 期数ID
+	 * @param int $course_id 课程ID
+	 */
+	public function periods(int $user_id, int $periods_id) {
+		$data = UserWatchTimeCourse::find()->select('course_id, progress, play_time')->where(compact('user_id', 'periods_id'))->all();
+		foreach($data as &$row) {
+			$row = $row->getAttributes(['course_id', 'progress', 'play_time']);
+		}
+		return $this->asData($data);
+	}
+	
+	/**
 	 * 根据用户ID、期数ID和课程ID获取每教材进度
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
 	 */
-	public function course(int $user_id, int $periods_id, int $course_id) {
-		$data = UserWatchTimeTextbook::find()->select('textbook_id, progress, play_time')->where(compact('user_id', 'periods_id', 'course_id'))->all();
+	public function course(int $user_id, int $periods_id, int $course_id = 0) {
+		$where = compact('user_id', 'periods_id');
+		$attrs = ['textbook_id', 'progress', 'play_time'];
+		if($course_id > 0) {
+			$where['course_id'] = $course_id;
+			$select = null;
+		} else {
+			$select = 'course_id,';
+			array_unshift($attrs, 'course_id');
+		}
+		$data = UserWatchTimeTextbook::find()->select($select . 'textbook_id, progress, play_time')->where($where)->all();
 		foreach($data as &$row) {
-			$row = $row->getAttributes(['textbook_id', 'progress', 'play_time']);
+			$row = $row->getAttributes($attrs);
 		}
 		return $this->asData($data);
 	}

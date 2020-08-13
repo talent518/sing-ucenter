@@ -11,12 +11,15 @@ class Integral extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
-	 * @param int $course_id 课程ID
+	 * @param array $course_id 课程ID
 	 * @param array $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
 	 * @param array $dest_type 目标类型(1产品2课程3主题4教材5环节)
 	 */
-	public function course(int $user_id, int $periods_id, int $course_id, array $business_type = [], array $dest_type = []) {
-		$query = UserIntegralLog::find()->where(compact('user_id', 'periods_id', 'course_id'));
+	public function course(int $user_id, int $periods_id, array $course_id = [], array $business_type = [], array $dest_type = []) {
+		$query = UserIntegralLog::find()->where(compact('user_id', 'periods_id'));
+		if($course_id) {
+			$query->andWhere(compact('course_id'));
+		}
 		if($business_type) {
 			$query->andWhere(compact('business_type'));
 		}
@@ -25,9 +28,13 @@ class Integral extends Base {
 		}
 		$data = $query->all();
 		
+		$noCourseId = (count($course_id) == 1);
 		foreach($data as &$row) {
 			$row = $row->attributes;
-			unset($row['user_id'], $row['periods_id'], $row['course_id']);
+			unset($row['user_id'], $row['periods_id']);
+			if($noCourseId) {
+				unset($row['course_id']);
+			}
 		}
 		
 		return $this->asData($data);

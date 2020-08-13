@@ -15,15 +15,26 @@ class TimeController extends Controller {
 	
 	protected function verbs() {
 		return [
-			'index' => ['GET'],
+			'periods' => ['GET'],
+			'course' => ['GET'],
+			'textbook' => ['GET'],
+			'segment' => ['GET'],
 			'get-attr' => ['GET'],
 			'view' => ['GET'],
 			'create' => ['POST'],
 		];
 	}
 	
-	public function actionCourse(int $user_id, int $periods_id, int $course_id) {
-		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0) {
+	public function actionPeriods(int $user_id, int $periods_id) {
+		if($user_id <= 0 || $periods_id <= 0) {
+			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
+		}
+		
+		return $this->time->periods($user_id, $periods_id);
+	}
+	
+	public function actionCourse(int $user_id, int $periods_id, int $course_id = 0) {
+		if($user_id <= 0 || $periods_id <= 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
