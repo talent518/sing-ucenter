@@ -18,10 +18,19 @@ class Time extends Base {
 	 * @param int $periods_id 期数ID
 	 * @param int $course_id 课程ID
 	 */
-	public function periods(int $user_id, int $periods_id) {
-		$data = UserWatchTimeCourse::find()->select('course_id, progress, play_time')->where(compact('user_id', 'periods_id'))->all();
+	public function periods(int $user_id, int $periods_id = 0) {
+		$where = compact('user_id');
+		$attrs = ['course_id', 'progress', 'play_time'];
+		if($periods_id > 0) {
+			$where['periods_id'] = $periods_id;
+			$select = null;
+		} else {
+			$select = 'periods_id,';
+			array_unshift($attrs, 'periods_id');
+		}
+		$data = UserWatchTimeCourse::find()->select($select . 'course_id, progress, play_time')->where($where)->all();
 		foreach($data as &$row) {
-			$row = $row->getAttributes(['course_id', 'progress', 'play_time']);
+			$row = $row->getAttributes($attrs);
 		}
 		return $this->asData($data);
 	}
@@ -58,10 +67,19 @@ class Time extends Base {
 	 * @param int $course_id 课程ID
 	 * @param int $textbook_id 教材ID
 	 */
-	public function textbook(int $user_id, int $periods_id, int $course_id, int $textbook_id) {
-		$data = UserWatchTimeSegment::find()->select('segment_id, progress, play_time')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id'))->all();
+	public function textbook(int $user_id, int $periods_id, int $course_id, int $textbook_id = 0) {
+		$where = compact('user_id', 'periods_id', 'course_id');
+		$attrs = ['segment_id', 'progress', 'play_time'];
+		if($textbook_id > 0) {
+			$where['textbook_id'] = $textbook_id;
+			$select = null;
+		} else {
+			$select = 'textbook_id,';
+			array_unshift($attrs, 'textbook_id');
+		}
+		$data = UserWatchTimeSegment::find()->select($select . 'segment_id, progress, play_time')->where($where)->all();
 		foreach($data as &$row) {
-			$row = $row->getAttributes(['segment_id', 'progress', 'play_time']);
+			$row = $row->getAttributes($attrs);
 		}
 		return $this->asData($data);
 	}
@@ -75,9 +93,18 @@ class Time extends Base {
 	 * @param int $textbook_id 教材ID
 	 * @param int $segment_id 环节ID
 	 */
-	public function segment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id) {
-		$data = UserWatchTimeElement::find()->select('element_id, duration, play_time, is_playable, max_play_time')->where(compact('user_id', 'periods_id', 'course_id', 'textbook_id', 'segment_id'))->all();
+	public function segment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id = 0) {
+		$where = compact('user_id', 'periods_id', 'course_id', 'textbook_id');
+		if($segment_id > 0) {
+			$where['segment_id'] = $segment_id;
+			$select = null;
+		} else {
+			$select = 'segment_id,';
+			array_unshift($attrs, 'segment_id');
+		}
+		$data = UserWatchTimeElement::find()->select($select . 'element_id, duration, play_time, is_playable, max_play_time')->where($where)->all();
 		foreach($data as &$row) {
+			$segId =  $row->segment_id;
 			$row = [
 				'element_id' => $row->element_id,
 				'is_playable' => $row->is_playable,
@@ -85,6 +112,9 @@ class Time extends Base {
 				'max_play_time' => $row->max_play_time,
 				'progress' => min(floor($row->max_play_time / $row->duration * 100), 100)
 			];
+			if($segment_id <= 0) {
+				$row['segment_id'] = $segId;
+			}
 		}
 		return $this->asData($data);
 	}

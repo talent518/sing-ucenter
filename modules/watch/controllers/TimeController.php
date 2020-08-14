@@ -25,8 +25,8 @@ class TimeController extends Controller {
 		];
 	}
 	
-	public function actionPeriods(int $user_id, int $periods_id) {
-		if($user_id <= 0 || $periods_id <= 0) {
+	public function actionPeriods(int $user_id, int $periods_id = 0) {
+		if($user_id <= 0 || $periods_id < 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
@@ -34,23 +34,23 @@ class TimeController extends Controller {
 	}
 	
 	public function actionCourse(int $user_id, int $periods_id, int $course_id = 0) {
-		if($user_id <= 0 || $periods_id <= 0) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id < 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
 		return $this->time->course($user_id, $periods_id, $course_id);
 	}
 	
-	public function actionTextbook(int $user_id, int $periods_id, int $course_id, int $textbook_id) {
-		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id <= 0) {
+	public function actionTextbook(int $user_id, int $periods_id, int $course_id, int $textbook_id = 0) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id < 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
 		return $this->time->textbook($user_id, $periods_id, $course_id, $textbook_id);
 	}
 	
-	public function actionSegment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id) {
-		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id <= 0 || $segment_id <= 0) {
+	public function actionSegment(int $user_id, int $periods_id, int $course_id, int $textbook_id, int $segment_id = 0) {
+		if($user_id <= 0 || $periods_id <= 0 || $course_id <= 0 || $textbook_id <= 0 || $segment_id < 0) {
 			return $this->asJson(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
