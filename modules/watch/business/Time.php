@@ -100,7 +100,6 @@ class Time extends Base {
 			$select = null;
 		} else {
 			$select = 'segment_id,';
-			array_unshift($attrs, 'segment_id');
 		}
 		$data = UserWatchTimeElement::find()->select($select . 'element_id, duration, play_time, is_playable, max_play_time')->where($where)->all();
 		foreach($data as &$row) {
