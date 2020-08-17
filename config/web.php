@@ -99,11 +99,6 @@ $config = [
             'controllerNamespace' => 'app\modules\open\controllers',
             'autoRegisterRouters' => true
         ],
-        'watch' => [
-            'class' => 'app\modules\watch\Module',
-        	'controllerNamespace' => 'app\modules\watch\controllers',
-            'autoRegisterRouters' => true
-        ],
     ],
     'params' => $params,
 ];

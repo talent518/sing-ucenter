@@ -42,6 +42,4 @@ return [
         'app_key' => 'OoUDxlPTSOAvqx4Hl93z9RON',
         'duration' => 300,
     ],
-	
-	'apiCourseService' => 'http://course-internal.changchangenglish.com/open/',
 ];
