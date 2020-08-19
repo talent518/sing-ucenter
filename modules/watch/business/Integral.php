@@ -87,6 +87,8 @@ class Integral extends Base {
 		
 		\Yii::$app->mutex->acquire('userIntegralLock-' . $user_id, 10);
 		
+		$transaction = UserIntegralLog::getDb()->beginTransaction();
+		
 		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
 		$model = UserIntegralLog::findOne($condition);
 		if($model) {
@@ -98,6 +100,8 @@ class Integral extends Base {
 		$model->stars = $stars;
 		$model->remark = $remark;
 		$ret = $model->save(false);
+		
+		$transaction->commit();
 		
 		return $ret ? $this->asOK('记录星星成功') : $this->asError('记录星星失败');
 	}
