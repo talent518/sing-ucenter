@@ -11,8 +11,8 @@ class Integral extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
-	 * @param array $course_id 课程ID
-	 * @param array $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
+	 * @param array $course_id 课程ID(如果产品工具时course_id为0)
+	 * @param array $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录 9家长须知)
 	 * @param array $dest_type 目标类型(1产品2课程3主题4教材5环节)
 	 */
 	public function course(int $user_id, int $periods_id, array $course_id = [], array $business_type = [], array $dest_type = []) {
@@ -57,8 +57,8 @@ class Integral extends Base {
 	 * 
 	 * @param int $user_id 用户ID
 	 * @param int $periods_id 期数ID
-	 * @param int $course_id 课程ID
-	 * @param int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
+	 * @param int $course_id 课程ID(如果产品工具时course_id为0)
+	 * @param int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录 9家长须知)
 	 * @param int $dest_type 目标类型(1产品2课程3主题4教材5环节)
 	 * @param int $dest_id 目标ID
 	 * @param int $stars 星星数
@@ -72,10 +72,10 @@ class Integral extends Base {
 		if($periods_id <= 0) {
 			return $this->asError('periods_id参数必须是大于零的整数');
 		}
-		if($course_id <= 0) {
-			return $this->asError('course_id参数必须是大于零的整数');
+		if($course_id < 0) {
+			return $this->asError('course_id参数必须是大于等于零的整数');
 		}
-		if($business_type <= 0 || $business_type > 8) {
+		if($business_type <= 0 || $business_type > 9) {
 			return $this->asError('business_type不能为' . $business_type);
 		}
 		if($dest_type <= 0 || $dest_type > 5) {
