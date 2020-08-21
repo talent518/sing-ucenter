@@ -28,13 +28,9 @@ class Integral extends Base {
 		}
 		$data = $query->all();
 		
-		$noCourseId = (count($course_id) == 1);
 		foreach($data as &$row) {
 			$row = $row->attributes;
 			unset($row['user_id'], $row['periods_id']);
-			if($noCourseId) {
-				unset($row['course_id']);
-			}
 		}
 		
 		return $this->asData($data);
