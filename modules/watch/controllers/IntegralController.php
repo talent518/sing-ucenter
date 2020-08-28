@@ -33,8 +33,8 @@ class IntegralController extends Controller {
 		return $this->integral->view($id);
 	}
 
-	public function actionCreate(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $is_duplicate = 0) {
-		return $this->integral->create($user_id, $periods_id, $course_id, $business_type, $dest_type, $dest_id, $stars, $remark, $is_duplicate != 0);
+	public function actionCreate(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $duplicates = 0) {
+		return $this->integral->create($user_id, $periods_id, $course_id, $business_type, $dest_type, $dest_id, $stars, $remark, $duplicates);
 	}
 
 }
