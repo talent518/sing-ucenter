@@ -13,6 +13,7 @@ use Yii;
  * @property int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
  * @property int $dest_type 目标类型(1产品2课程3主题4教材5环节)
  * @property int $dest_id 目标ID
+ * @property int $flag 允许重复的标示
  * @property int $stars 素材时长
  * @property string $remark 备注
  * @property string $created_at 创建时间
@@ -34,10 +35,10 @@ class UserIntegralLog extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id'], 'required'],
-            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'stars'], 'integer'],
+            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'stars', 'flag'], 'integer'],
             [['created_at'], 'safe'],
             [['remark'], 'string', 'max' => 100],
-            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id']],
+            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag']],
         ];
     }
 
@@ -53,7 +54,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
             'business_type' => '业务类型',
             'dest_type' => '目标类型',
             'dest_id' => '目标ID',
-            'flag' => '标示',
+            'flag' => '允许重复的标示',
             'stars' => '星星数',
             'remark' => '备注',
             'created_at' => '创建时间',
@@ -65,7 +66,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
     		return false;
     	}
     	
-    	return $this->stars > 0;
+    	return $this->stars != 0;
     }
     
     public function afterSave($insert, $changedAttributes) {

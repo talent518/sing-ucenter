@@ -61,7 +61,7 @@ class Integral extends Base {
 	 * @param string $remark 备注
 	 * @return \app\core\CCResponse
 	 */
-	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '') {
+	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', bool $is_duplicate = false) {
 		if($user_id <= 0) {
 			return $this->asError('user_id参数必须是大于零的整数');
 		}
@@ -81,14 +81,25 @@ class Integral extends Base {
 			return $this->asError('dest_id参数必须是大于零的整数');
 		}
 		
+		if($stars == 0) {
+			return $this->asError('stars参数不能为0');
+		}
+		
 		\Yii::$app->mutex->acquire('userIntegralLock-' . $user_id, 10);
 		
 		$transaction = UserIntegralLog::getDb()->beginTransaction();
 		
+		if($stars < 0 && UserIntegral::find()->where(compact('user_id'))->select('stars')->scalar() < -$stars) {
+			return $this->asError('星星数不够');
+		}
+		
 		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
-		$model = UserIntegralLog::findOne($condition);
-		if($model) {
+		if($is_duplicate) {
+			$condition['flag'] = (int) UserIntegralLog::find()->where($condition)->max('flag') + 1;
+		} elseif(UserIntegralLog::find()->where($condition)->exists()) {
 			return $this->asError('星星记录存在');
+		} else {
+			$condition['flag'] = 0;
 		}
 		
 		$model = new UserIntegralLog();
