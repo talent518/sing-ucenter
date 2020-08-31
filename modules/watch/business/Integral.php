@@ -3,6 +3,7 @@ namespace app\modules\watch\business;
 
 use app\models\watch\UserIntegral;
 use app\models\watch\UserIntegralLog;
+use yii\db\Transaction;
 
 class Integral extends Base {
 	
@@ -111,10 +112,52 @@ class Integral extends Base {
 		$model->stars = $stars;
 		$model->remark = $remark;
 		$ret = $model->save(false);
-		
 		$transaction->commit();
 		
-		return $ret ? $this->asOK('记录星星成功') : $this->asError('记录星星失败');
+		if($ret) {
+			$desc = '学习奖励';
+			switch ($model->business_type) {
+				case 9:
+					$desc = '完成家长须知';
+					break;
+				case 3:
+					$desc = '分享学习报告';
+					break;
+				case 5: 
+					$desc = '生成毕业证书';
+					break;
+				case 6: 
+					$desc = '分享毕业证书';
+					break;
+			}
+			
+			try {
+				$db = \Yii::$app->getDb();
+				$transaction = $db->beginTransaction(Transaction::SERIALIZABLE);
+				$lastValue = $db->createCommand('SELECT last_value FROM `sing-user`.`user_integral_report` WHERE user_id=:uid ORDER BY id DESC', [
+					':uid' => $model->user_id
+				])->queryScalar();
+				$params = [
+					'user_id' => $model->user_id,
+					'is_add' => $model->stars > 0 ? 1 : 0,
+					'value' => $model->stars,
+					'source' => 200 + $model->business_type * 32 + $model->dest_type,
+					'last_value' => $lastValue + $model->stars,
+					'desc' => $desc,
+					'desc_id' => $model->dest_id,
+					'periods_id' => $model->periods_id
+				];
+				$db->createCommand('INSERT INTO `sing-user`.`user_integral_report` (`' . implode('`,`', array_keys($params)) . '`,`created_at`,`updated_at`)VALUES(:' . implode(',:', array_keys($params)) . ',NOW(),NOW())', $params)->execute();
+				$transaction->commit();
+				
+				return $this->asOK('记录星星成功');
+			} catch(\Exception $e) {
+				\Yii::error($e);
+				return $this->asData($e->getMessage(), '记录星星成功');
+			}
+		} else {
+			return $this->asError('记录星星失败');
+		}
 	}
 
 }
