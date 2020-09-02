@@ -33,7 +33,7 @@ class WatchController extends Controller {
 				$exists = $db->createCommand('SELECT id FROM `sing-user`.`user_integral_report` WHERE user_id=:uid AND is_add=:is_add AND `source`=:source AND desc_id=:desc_id AND periods_id=:periods_id', [
 					':uid' => $model->user_id,
 					':is_add' => $model->stars > 0 ? 1 : 0,
-					':source' => 200 + $model->business_type * 32 + $model->dest_type + ($model->flag > 0 ? ($model->flag - 1) * 16 : 0),
+					':source' => 200 + ($model->business_type << 5) + $model->dest_type + ($model->flag << 10),
 					':desc_id' => $model->dest_id,
 					':periods_id' => $model->periods_id
 				])->queryScalar();
@@ -49,7 +49,7 @@ class WatchController extends Controller {
 					'user_id' => $model->user_id,
 					'is_add' => $model->stars > 0 ? 1 : 0,
 					'value' => abs($model->stars),
-					'source' => 200 + $model->business_type * 32 + $model->dest_type + ($model->flag > 0 ? ($model->flag - 1) * 16 : 0),
+					'source' => 200 + ($model->business_type << 5) + $model->dest_type + ($model->flag << 10),
 					'last_value' => $lastValue + $model->stars,
 					'desc' => $desc,
 					'desc_id' => $model->dest_id,
