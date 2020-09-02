@@ -48,6 +48,18 @@ class Integral extends Base {
 		
 		return $this->asData((int) UserIntegral::find()->select('stars')->where(compact('user_id'))->scalar());
 	}
+	
+	/**
+	 * 查询用户星星数
+	 * 
+	 * @param int $user_id 用户ID
+	 * @return \app\core\CCResponse
+	 */
+	public function viewMerge(int $user_id) {
+		if($user_id <= 0) return $this->asData(0);
+		
+		return $this->asData((int) \Yii::$app->db->createCommand('SELECT last_value FROM `sing-user`.`user_integral_report` WHERE user_id=:uid ORDER BY id DESC LIMIT 1', [':uid'=>$user_id])->queryScalar());
+	}
 
 	/**
 	 * 记录星星明细并自动更新用户星星数
@@ -152,6 +164,7 @@ class Integral extends Base {
 				
 				return $this->asOK('记录星星成功');
 			} catch(\Exception $e) {
+				$transaction->rollBack();
 				\Yii::error($e);
 				return $this->asData($e->getMessage(), '记录星星成功');
 			}
