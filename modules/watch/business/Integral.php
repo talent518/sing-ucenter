@@ -152,8 +152,8 @@ class Integral extends Base {
 				$params = [
 					'user_id' => $model->user_id,
 					'is_add' => $model->stars > 0 ? 1 : 0,
-					'value' => $model->stars,
-					'source' => 200 + $model->business_type * 32 + $model->dest_type,
+					'value' => abs($model->stars),
+					'source' => 200 + $model->business_type * 32 + $model->dest_type + ($model->flag > 0 ? ($model->flag - 1) * 16 : 0),
 					'last_value' => $lastValue + $model->stars,
 					'desc' => $desc,
 					'desc_id' => $model->dest_id,

@@ -10,6 +10,22 @@ class WatchController extends Controller {
 	public function actionIntegral() {
 		$list = UserIntegralLog::find()->all();
 		foreach($list as $model) {
+			$desc = '学习奖励';
+			switch ($model->business_type) {
+				case 9:
+					$desc = '完成家长须知';
+					break;
+				case 3:
+					$desc = '分享学习报告';
+					break;
+				case 5: 
+					$desc = '生成毕业证书';
+					break;
+				case 6: 
+					$desc = '分享毕业证书';
+					break;
+			}
+			
 			try {
 				$db = \Yii::$app->getDb();
 				$transaction = $db->beginTransaction(Transaction::SERIALIZABLE);
@@ -17,7 +33,7 @@ class WatchController extends Controller {
 				$exists = $db->createCommand('SELECT id FROM `sing-user`.`user_integral_report` WHERE user_id=:uid AND is_add=:is_add AND `source`=:source AND desc_id=:desc_id AND periods_id=:periods_id', [
 					':uid' => $model->user_id,
 					':is_add' => $model->stars > 0 ? 1 : 0,
-					':source' => 200 + $model->business_type * 32 + $model->dest_type,
+					':source' => 200 + $model->business_type * 32 + $model->dest_type + ($model->flag > 0 ? ($model->flag - 1) * 16 : 0),
 					':desc_id' => $model->dest_id,
 					':periods_id' => $model->periods_id
 				])->queryScalar();
@@ -32,8 +48,8 @@ class WatchController extends Controller {
 				$params = [
 					'user_id' => $model->user_id,
 					'is_add' => $model->stars > 0 ? 1 : 0,
-					'value' => $model->stars,
-					'source' => 200 + $model->business_type * 32 + $model->dest_type,
+					'value' => abs($model->stars),
+					'source' => 200 + $model->business_type * 32 + $model->dest_type + ($model->flag > 0 ? ($model->flag - 1) * 16 : 0),
 					'last_value' => $lastValue + $model->stars,
 					'desc' => $desc,
 					'desc_id' => $model->dest_id,
@@ -43,7 +59,7 @@ class WatchController extends Controller {
 				$transaction->commit();
 			} catch(\Exception $e) {
 				$transaction->rollBack();
-				\Yii::error($e);
+				echo $e->getMessage(), PHP_EOL;
 			}
 		}
 	}
