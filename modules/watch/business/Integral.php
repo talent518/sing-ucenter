@@ -73,9 +73,10 @@ class Integral extends Base {
 	 * @param int $stars 星星数
 	 * @param string $remark 备注
 	 * @param int $duplicates 允许重复次数
+	 * @param string $platform 平台：iphone, ipad, android, h5, mini
 	 * @return \app\core\CCResponse
 	 */
-	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $duplicates = 0) {
+	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $duplicates = 0, string $platform = '') {
 		if($user_id <= 0) {
 			return $this->asError('user_id参数必须是大于零的整数');
 		}
@@ -123,6 +124,9 @@ class Integral extends Base {
 		$model->setAttributes($condition);
 		$model->stars = $stars;
 		$model->remark = $remark;
+		if(in_array($platform, ['iphone', 'ipad', 'android', 'h5', 'mini'])) {
+			$model->platform = $platform;
+		}
 		$ret = $model->save(false);
 		$transaction->commit();
 		

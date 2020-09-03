@@ -15,6 +15,7 @@ use Yii;
  * @property int $dest_id 目标ID
  * @property int $flag 允许重复的标示
  * @property int $stars 素材时长
+ * @property string $platform 平台
  * @property string $remark 备注
  * @property string $created_at 创建时间
  */
@@ -38,6 +39,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
             [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'stars', 'flag'], 'integer'],
             [['created_at'], 'safe'],
             [['remark'], 'string', 'max' => 100],
+            [['platform'], 'in', 'range'=>['iphone', 'ipad', 'android', 'h5', 'mini']],
             [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag']],
         ];
     }
@@ -56,6 +58,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
             'dest_id' => '目标ID',
             'flag' => '允许重复的标示',
             'stars' => '星星数',
+            'platform' => '平台',
             'remark' => '备注',
             'created_at' => '创建时间',
         ];
@@ -76,9 +79,12 @@ class UserIntegralLog extends \yii\db\ActiveRecord
     	if(!$model) {
     		$model = new UserIntegral();
     		$model->user_id = $this->user_id;
-    		$model->stars = 0;
+    		$model->stars = $model->iphone_stars = $model->ipad_stars = $model->android_stars = $model->h5_stars = $model->mini_stars = 0;
     	}
     	$model->stars += $this->stars;
+    	if($this->platform) {
+    		$model->{$this->platform . '_stars'} += $this->stars;
+    	}
     	$model->save(false);
     }
 }
