@@ -21,5 +21,5 @@ class ErrInfo
     const GET_LOCK_FAILED = ['code' => 1007, 'message' => '获取锁失败'];
     const DATA_IS_EMPTY = ['code' => 1008, 'message' => '数据为空'];
     const INVALID_JSON = ['code' => 1009, 'message' => 'JSON格式不正确'];
-
+    const SAVE_FAILURE = ['code' => 10010, 'message' => '保存失败'];
 }

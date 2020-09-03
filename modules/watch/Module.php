@@ -1,10 +1,12 @@
 <?php
 namespace app\modules\watch;
 
+use app\core\CCModule;
+
 /**
  * market module definition class
  */
-class Module extends \yii\base\Module {
+class Module extends CCModule {
 	public $autoRegisterRouters;
 	
 	/**

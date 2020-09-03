@@ -14,6 +14,7 @@ $config = [
     'controllerNamespace' => 'app\controllers',
     'components' => [
         'request' => [
+            'class' => 'app\core\Request',
             'parsers' => [
                 'application/json' => [
                     'class' => 'yii\web\JsonParser',
@@ -101,6 +102,7 @@ $config = [
         ],
         'watch' => [
             'class' => 'app\modules\watch\Module',
+            'businessNamespace' => 'app\modules\watch\businesses',
         	'controllerNamespace' => 'app\modules\watch\controllers',
             'autoRegisterRouters' => true
         ],
