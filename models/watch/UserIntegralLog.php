@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $user_id 用户ID
  * @property int $periods_id 期数ID
+ * @property int $class_id 班级ID
  * @property int $course_id 课程ID
  * @property int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录)
  * @property int $dest_type 目标类型(1产品2课程3主题4教材5环节)
@@ -35,12 +36,12 @@ class UserIntegralLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id'], 'required'],
-            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'stars', 'flag'], 'integer'],
+            [['user_id', 'periods_id', 'class_id', 'course_id', 'business_type', 'dest_type', 'dest_id'], 'required'],
+            [['user_id', 'periods_id', 'class_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'stars', 'flag'], 'integer'],
             [['created_at'], 'safe'],
             [['remark'], 'string', 'max' => 100],
             [['platform'], 'in', 'range'=>['iphone', 'ipad', 'android', 'h5', 'mini']],
-            [['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag']],
+            [['user_id', 'periods_id', 'class_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag'], 'unique', 'targetAttribute' => ['user_id', 'periods_id', 'class_id', 'course_id', 'business_type', 'dest_type', 'dest_id', 'flag']],
         ];
     }
 
@@ -52,6 +53,7 @@ class UserIntegralLog extends \yii\db\ActiveRecord
         return [
             'user_id' => '用户ID',
             'periods_id' => '期数ID',
+            'class_id' => '班级ID',
             'course_id' => '课程ID',
             'business_type' => '业务类型',
             'dest_type' => '目标类型',

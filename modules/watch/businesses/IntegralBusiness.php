@@ -10,23 +10,15 @@ use yii\db\Transaction;
 
 class IntegralBusiness implements IIntegralBusiness {
 	
-	/**
-	 * 根据用户ID、期数ID和课程ID获取星星记录列表
-	 * 
-	 * @param int $user_id 用户ID
-	 * @param int $periods_id 期数ID
-	 * @param array $course_id 课程ID(如果产品工具时course_id为0)
-	 * @param array $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录 9家长须知)
-	 * @param array $dest_type 目标类型(1产品2课程3主题4教材5环节)
-	 * 
-	 * @return array
-	 */
-	public function course(int $user_id, int $periods_id, array $course_id = [], array $business_type = [], array $dest_type = []) : array {
+	public function course(int $user_id, int $periods_id, array $class_id = [], array $course_id = [], array $business_type = [], array $dest_type = []) : array {
 		if($user_id <= 0 || $periods_id <= 0) {
 			throw new CCException(ErrInfo::MISS_REQUIRE_PARAMS);
 		}
 		
 		$query = UserIntegralLog::find()->where(compact('user_id', 'periods_id'));
+		if($class_id) {
+			$query->andWhere(compact('class_id'));
+		}
 		if($course_id) {
 			$query->andWhere(compact('course_id'));
 		}
@@ -49,12 +41,6 @@ class IntegralBusiness implements IIntegralBusiness {
 		return $data;
 	}
 
-	/**
-	 * 查询用户星星数
-	 * 
-	 * @param int $user_id 用户ID
-	 * @return int
-	 */
 	public function view(int $user_id) : int {
 		if($user_id <= 0) {
 			throw new CCException(ErrInfo::MISS_REQUIRE_PARAMS, 'user_id');
@@ -63,12 +49,6 @@ class IntegralBusiness implements IIntegralBusiness {
 		return (int) UserIntegral::find()->select('stars')->where(compact('user_id'))->scalar();
 	}
 	
-	/**
-	 * 查询用户星星数
-	 * 
-	 * @param int $user_id 用户ID
-	 * @return int
-	 */
 	public function viewMerge(int $user_id) : int {
 		if($user_id <= 0) {
 			throw new CCException(ErrInfo::MISS_REQUIRE_PARAMS, 'user_id');
@@ -77,27 +57,15 @@ class IntegralBusiness implements IIntegralBusiness {
 		return (int) \Yii::$app->db->createCommand('SELECT last_value FROM `sing-user`.`user_integral_report` WHERE user_id=:uid ORDER BY id DESC LIMIT 1', [':uid'=>$user_id])->queryScalar();
 	}
 
-	/**
-	 * 记录星星明细并自动更新用户星星数
-	 * 
-	 * @param int $user_id 用户ID
-	 * @param int $periods_id 期数ID
-	 * @param int $course_id 课程ID(如果产品工具时course_id为0)
-	 * @param int $business_type 业务类型(1教材 2环节 3学习报告 4调查问卷 5生成证书 6分享证书 7礼品兑换 8成长记录 9家长须知)
-	 * @param int $dest_type 目标类型(1产品2课程3主题4教材5环节)
-	 * @param int $dest_id 目标ID
-	 * @param int $stars 星星数
-	 * @param string $remark 备注
-	 * @param int $duplicates 允许重复次数
-	 * @param string $platform 平台：iphone, ipad, android, h5, mini
-	 * @return bool
-	 */
-	public function create(int $user_id, int $periods_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $duplicates = 0, string $platform = '') : bool {
+	public function create(int $user_id, int $periods_id, int $class_id, int $course_id, int $business_type, int $dest_type, int $dest_id, int $stars, string $remark = '', int $duplicates = 0, string $platform = '') : bool {
 		if($user_id <= 0) {
 			throw new CCException(ErrInfo::INVALID_PARAMS, 'user_id参数必须是大于零的整数');
 		}
 		if($periods_id <= 0) {
 			throw new CCException(ErrInfo::INVALID_PARAMS, 'periods_id参数必须是大于零的整数');
+		}
+		if($class_id < 0) {
+			throw new CCException(ErrInfo::INVALID_PARAMS, 'class_id参数必须是大于等于零的整数');
 		}
 		if($course_id < 0) {
 			throw new CCException(ErrInfo::INVALID_PARAMS, 'course_id参数必须是大于等于零的整数');
@@ -124,7 +92,7 @@ class IntegralBusiness implements IIntegralBusiness {
 			throw new CCException(ErrInfo::INVALID_PARAMS, '星星数不够');
 		}
 		
-		$condition = compact('user_id', 'periods_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
+		$condition = compact('user_id', 'periods_id', 'class_id', 'course_id', 'business_type', 'dest_type', 'dest_id');
 		if($duplicates > 0) {
 			$condition['flag'] = (int) UserIntegralLog::find()->where($condition)->max('flag') + 1;
 			if($condition['flag'] > $duplicates) {
