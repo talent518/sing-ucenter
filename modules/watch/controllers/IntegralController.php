@@ -28,6 +28,12 @@ class IntegralController extends CCController {
 		];
 	}
 	
+	public function bindActionParams($action, $params) {
+		if(YII_ENV_PROD && !isset($params['class_id'])) $params['class_id'] = 1; // 防止上线时接口报错问题
+		
+		return parent::bindActionParams($action, $params);
+	}
+	
 	protected function getParamAsArray(string $name, string $split = ',') {
 		$request = \Yii::$app->request;
 		$arr = $request->getBodyParam($name, $request->get($name, []));
