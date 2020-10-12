@@ -16,6 +16,7 @@ class ErrorHandler extends \yii\web\ErrorHandler
      */
     protected function renderException($exception)
     {
+    	\Yii::$app->get('msgNotice')->error($exception);
         if (\Yii::$app->has('response')) {
             $response = \Yii::$app->getResponse();
             if ($exception instanceof HttpException) {

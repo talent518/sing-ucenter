@@ -41,6 +41,14 @@ $config = [
                 'charset' => 'UTF-8',
                 'from' => ['demo@qq.com' => 'yii2']
             ],
+        ],
+        'msgNotice' => [
+            'class' => 'app\core\MsgNotice',
+            'ssoAppId' => 4,
+            'mnsEndPoint' => 'http://1818292842517217.mns.cn-shenzhen-internal.aliyuncs.com/',
+            'mnsAccessId' => 'LTAI4G6nkMPLmTn9WXxjeaeP',
+            'mnsAccessKey' => 'D0Raz7uWq6YROEQSjEHxR2YNFcQAyk',
+            'mnsTopic' => 'system-event',
         ]
     ],
 ];

@@ -39,6 +39,9 @@ $config = [
             'channel' => 'queue4',
             'attempts' => 3,
         ],
+        'errorHandler' => [
+            'class' => 'app\core\ErrorHandlerConsole'
+        ],
         'mutex' => [
             'class' => 'yii\redis\Mutex',
             'redis' => 'redis',
