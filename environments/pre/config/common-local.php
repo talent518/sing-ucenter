@@ -38,7 +38,7 @@ $config = [
         ],
         'msgNotice' => [
             'class' => 'app\core\MsgNotice',
-            'ssoAppId' => 4,
+            'ssoAppId' => 18,
             'mnsEndPoint' => 'http://1818292842517217.mns.cn-shenzhen-internal.aliyuncs.com/',
             'mnsAccessId' => 'LTAI4GGkK4bXL5jJvnpARYfQ',
             'mnsAccessKey' => 'o8a0vCHgXyRQY9kAvA8x85Yq8SzHSG',
