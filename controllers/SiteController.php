@@ -10,6 +10,6 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->renderContent('<div>market api,env is ' . YII_ENV . '</div>');
+        return $this->renderContent('<div>ucenter api,env is ' . YII_ENV . '</div>');
     }
 }
