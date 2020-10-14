@@ -12,15 +12,16 @@ use yii\base\InvalidConfigException;
 use yii\db\ActiveQueryInterface;
 
 /**
- * ActiveDataProvider is an enhanced version of [[\yii\data\ActiveDataProvider]] specific to the ElasticSearch.
+ * ActiveDataProvider is an enhanced version of [[\yii\data\ActiveDataProvider]] specific to the Elasticsearch.
  * It allows to fetch not only rows and total rows count, but full query results including aggregations and so on.
  *
- * Note: this data provider fetches result models and total count using single ElasticSearch query, so results total
+ * Note: this data provider fetches result models and total count using single Elasticsearch query, so results total
  * count will be fetched after pagination limit applying, which eliminates ability to verify if requested page number
- * actually exist. Data provider disables [[yii\data\Pagination::validatePage]] automatically because of this.
+ * actually exist. Data provider disables [[yii\data\Pagination::$validatePage]] automatically because of this.
  *
  * @property array $aggregations All aggregations results. This property is read-only.
  * @property array $queryResults Full query results.
+ * @property array $suggestions All suggestions results. This property is read-only.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.0.5
@@ -65,15 +66,39 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
      * Returns results of the specified aggregation.
      * @param string $name aggregation name.
      * @return array aggregation results.
-     * @throws InvalidCallException if requested aggregation does not present in query results.
+     * @throws InvalidCallException if query results do not contain the requested aggregation.
      */
     public function getAggregation($name)
     {
         $aggregations = $this->getAggregations();
         if (!isset($aggregations[$name])) {
-            throw new InvalidCallException("Aggregation '{$name}' does not present.");
+            throw new InvalidCallException("Aggregation '{$name}' not found.");
         }
         return $aggregations[$name];
+    }
+
+    /**
+     * @return array all suggestions results
+     */
+    public function getSuggestions()
+    {
+        $results = $this->getQueryResults();
+        return isset($results['suggest']) ? $results['suggest'] : [];
+    }
+
+    /**
+     * Returns results of the specified suggestion.
+     * @param string $name suggestion name.
+     * @return array suggestion results.
+     * @throws InvalidCallException if query results do not contain the requested suggestion.
+     */
+    public function getSuggestion($name)
+    {
+        $suggestions = $this->getSuggestions();
+        if (!isset($suggestions[$name])) {
+            throw new InvalidCallException("Suggestion '{$name}' not found.");
+        }
+        return $suggestions[$name];
     }
 
     /**
@@ -116,7 +141,10 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
         }
 
         $results = $this->getQueryResults();
-        return isset($results['hits']['total']) ? (int)$results['hits']['total'] : 0;
+        if (isset($results['hits']['total'])) {
+            return is_array($results['hits']['total']) ? (int) $results['hits']['total']['value'] : (int) $results['hits']['total'];
+        }
+        return 0;
     }
 
     /**
@@ -136,23 +164,11 @@ class ActiveDataProvider extends \yii\data\ActiveDataProvider
 
             return $keys;
         } elseif ($this->query instanceof ActiveQueryInterface) {
-            /* @var $class \yii\db\ActiveRecord */
+            /* @var $class \yii\elasticsearch\ActiveRecord */
             $class = $this->query->modelClass;
-            $pks = $class::primaryKey();
-            if (!is_array($pks) || count($pks) === 1) {
-                foreach ($models as $model) {
-                    $keys[] = $model->primaryKey;
-                }
-            } else {
-                foreach ($models as $model) {
-                    $kk = [];
-                    foreach ($pks as $pk) {
-                        $kk[$pk] = $model[$pk];
-                    }
-                    $keys[] = $kk;
-                }
+            foreach ($models as $model) {
+                $keys[] = $model->primaryKey;
             }
-
             return $keys;
         } else {
             return array_keys($models);

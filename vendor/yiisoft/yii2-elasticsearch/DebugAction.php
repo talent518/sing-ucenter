@@ -15,7 +15,7 @@ use yii\web\Response;
 use Yii;
 
 /**
- * Debug Action is used by [[DebugPanel]] to perform elasticsearch queries using ajax.
+ * Debug Action is used by [[DebugPanel]] to perform Elasticsearch queries using ajax.
  *
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
@@ -56,7 +56,7 @@ class DebugAction extends Action
         $method = mb_substr($url, 0, $pos = mb_strpos($url, ' '));
         $url = mb_substr($url, $pos + 1);
 
-        $options = ['pretty' => true];
+        $options = ['pretty' => 'true'];
 
         /* @var $db Connection */
         $db = \Yii::$app->get($this->db);
@@ -68,7 +68,7 @@ class DebugAction extends Action
             case 'DELETE': $result = $db->delete($url, $options, $body, true); break;
             case 'HEAD': $result = $db->head($url, $options, $body); break;
             default:
-                throw new NotSupportedException("Request method '$method' is not supported by elasticsearch.");
+                throw new NotSupportedException("Request method '$method' is not supported by Elasticsearch.");
         }
         $time = microtime(true) - $time;
 

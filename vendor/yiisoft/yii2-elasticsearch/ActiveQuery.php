@@ -45,7 +45,7 @@ use yii\db\ActiveRelationTrait;
  * ```php
  * $customers = Customer::find()->with('orders')->asArray()->all();
  * ```
- * > NOTE: elasticsearch limits the number of records returned to 10 records by default.
+ * > NOTE: Elasticsearch limits the number of records returned to 10 records by default.
  * > If you expect to get more records you should specify limit explicitly.
  *
  * Relational query
@@ -64,7 +64,7 @@ use yii\db\ActiveRelationTrait;
  * This methods may only be called in a relational context. Same is true for [[inverseOf()]], which
  * marks a relation as inverse of another relation.
  *
- * > Note: elasticsearch limits the number of records returned by any query to 10 records by default.
+ * > Note: Elasticsearch limits the number of records returned by any query to 10 records by default.
  * > If you expect to get more records you should specify limit explicitly in relation definition.
  * > This is also important for relations that use [[via()]] so that if via records are limited to 10
  * > the relations records can also not be more than 10.
@@ -87,7 +87,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
 
     /**
      * Constructor.
-     * @param array $modelClass the model class associated with this query
+     * @param string $modelClass the model class associated with this query
      * @param array $config configurations to be applied to the newly created query object
      */
     public function __construct($modelClass, $config = [])
@@ -306,6 +306,7 @@ class ActiveQuery extends Query implements ActiveQueryInterface
                 'options' => $command->options,
             ]);
         }
+
         // TODO implement with() for asArray
         if (!empty($result['hits']['hits']) && !$this->asArray) {
             $models = $this->createModels($result['hits']['hits']);
@@ -328,7 +329,6 @@ class ActiveQuery extends Query implements ActiveQueryInterface
     {
         if ($field === '_id') {
             $command = $this->createCommand($db);
-            $command->queryParts['fields'] = [];
             $command->queryParts['_source'] = false;
             $result = $command->search();
             if ($result === false) {
