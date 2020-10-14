@@ -10,18 +10,6 @@ class CCController extends ActiveController
 {
     public $modelClass = '';
 
-    /**
-     * 请求对象
-     * @var \yii\web\Request
-     */
-    protected $request;
-
-    public function init()
-    {
-        parent::init();
-        $this->request = \Yii::$app->request;
-    }
-
     public function actions()
     {
         $actions = parent::actions();
