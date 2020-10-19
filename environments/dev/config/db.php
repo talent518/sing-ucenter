@@ -48,6 +48,105 @@ return [
                 ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-ucenter;port={$DB_READ_PORT}"],
             ],
         ],
+        'db_user' => [
+            'class' => 'yii\db\Connection',
+            // 配置主服务器
+            'dsn' => "mysql:host={$DB_WRITE_HOST};dbname=sing-user;port={$DB_WRITE_PORT}",
+            'username' => $DB_USER,
+            'password' => $DB_PASSWORD,
+            'charset' => 'utf8mb4',
+            'enableSlaves' => true,
+            'enableSchemaCache' => true,
+            'schemaCache' => 'cache', // Name of the cache component used to store schema information
+            'schemaCacheDuration' => 600,
+            // 配置从服务器
+            'slaveConfig' => [
+                'username' => $DB_USER,
+                'password' => $DB_PASSWORD,
+                'charset' => 'utf8mb4',
+                'attributes' => [
+                    PDO::ATTR_TIMEOUT => 10,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                ],
+                'enableSlaves' => true,
+                'enableSchemaCache' => true,
+                'schemaCache' => 'cache', // Name of the cache component used to store schema information
+                'schemaCacheDuration' => 600,
+            ],
+
+            // 配置从服务器组
+            'slaves' => [
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-user;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-user;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-user;port={$DB_READ_PORT}"],
+            ],
+        ],
+        'db_order' => [
+            'class' => 'yii\db\Connection',
+            // 配置主服务器
+            'dsn' => "mysql:host={$DB_WRITE_HOST};dbname=sing-order;port={$DB_WRITE_PORT}",
+            'username' => $DB_USER,
+            'password' => $DB_PASSWORD,
+            'charset' => 'utf8mb4',
+            'enableSlaves' => true,
+            'enableSchemaCache' => true,
+            'schemaCache' => 'cache', // Name of the cache component used to store schema information
+            'schemaCacheDuration' => 600,
+            // 配置从服务器
+            'slaveConfig' => [
+                'username' => $DB_USER,
+                'password' => $DB_PASSWORD,
+                'charset' => 'utf8mb4',
+                'attributes' => [
+                    PDO::ATTR_TIMEOUT => 10,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                ],
+                'enableSlaves' => true,
+                'enableSchemaCache' => true,
+                'schemaCache' => 'cache', // Name of the cache component used to store schema information
+                'schemaCacheDuration' => 600,
+            ],
+
+            // 配置从服务器组
+            'slaves' => [
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-order;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-order;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-order;port={$DB_READ_PORT}"],
+            ],
+        ],
+        'db_pub' => [
+            'class' => 'yii\db\Connection',
+            // 配置主服务器
+            'dsn' => "mysql:host={$DB_WRITE_HOST};dbname=sing-pub;port={$DB_WRITE_PORT}",
+            'username' => $DB_USER,
+            'password' => $DB_PASSWORD,
+            'charset' => 'utf8mb4',
+            'enableSlaves' => true,
+            'enableSchemaCache' => true,
+            'schemaCache' => 'cache', // Name of the cache component used to store schema information
+            'schemaCacheDuration' => 600,
+            // 配置从服务器
+            'slaveConfig' => [
+                'username' => $DB_USER,
+                'password' => $DB_PASSWORD,
+                'charset' => 'utf8mb4',
+                'attributes' => [
+                    PDO::ATTR_TIMEOUT => 10,
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                ],
+                'enableSlaves' => true,
+                'enableSchemaCache' => true,
+                'schemaCache' => 'cache', // Name of the cache component used to store schema information
+                'schemaCacheDuration' => 600,
+            ],
+
+            // 配置从服务器组
+            'slaves' => [
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-pub;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-pub;port={$DB_READ_PORT}"],
+                ['dsn' => "mysql:host={$DB_READ_HOST};dbname=sing-pub;port={$DB_READ_PORT}"],
+            ],
+        ],
         //redis链接配置
         'redis' => [
             'class' => 'yii\redis\Connection',
